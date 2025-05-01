@@ -38,9 +38,17 @@ test('Cognito User Pool Created', () => {
     GenerateSecret: false,
     ExplicitAuthFlows: [
       'ALLOW_USER_PASSWORD_AUTH',
+      'ALLOW_ADMIN_USER_PASSWORD_AUTH',
       'ALLOW_USER_SRP_AUTH',
-      'ALLOW_ADMIN_USER_PASSWORD_AUTH'
-    ]
+      'ALLOW_REFRESH_TOKEN_AUTH'
+    ],
+    SupportedIdentityProviders: ['COGNITO']
+  });
+
+  // Verify User Pool Domain is created
+  template.resourceCountIs('AWS::Cognito::UserPoolDomain', 1);
+  template.hasResourceProperties('AWS::Cognito::UserPoolDomain', {
+    Domain: 'feature-flip'
   });
 });
 
