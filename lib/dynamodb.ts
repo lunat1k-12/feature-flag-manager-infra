@@ -10,7 +10,8 @@ export class DynamoDbStack extends cdk.Stack {
 
         const envTable = new dynamodb.Table(this, 'Environment', {
             tableName: 'Environment',
-            partitionKey: { name: 'name', type: dynamodb.AttributeType.STRING },
+            partitionKey: { name: 'userId', type: dynamodb.AttributeType.STRING },
+            sortKey: {name: 'name', type: dynamodb.AttributeType.STRING },
             billingMode: dynamodb.BillingMode.PAY_PER_REQUEST, // On-demand pricing
             removalPolicy: RemovalPolicy.DESTROY, // Auto-delete table on stack removal
         });
