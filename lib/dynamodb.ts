@@ -36,5 +36,11 @@ export class DynamoDbStack extends cdk.Stack {
             billingMode: dynamodb.BillingMode.PAY_PER_REQUEST, // On-demand pricing
             removalPolicy: RemovalPolicy.DESTROY, // Auto-delete table on stack removal
         });
+
+        ffTable.addGlobalSecondaryIndex({
+            indexName: 'FFUserId',
+            partitionKey: { name: 'userId', type: dynamodb.AttributeType.STRING },
+            sortKey: {name: 'EnvName', type: dynamodb.AttributeType.STRING }
+        })
     }
 }
