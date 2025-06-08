@@ -26,32 +26,36 @@ export class CognitoStack extends cdk.Stack {
                     required: true,
                     mutable: true
                 },
-                givenName: {
-                    required: true,
-                    mutable: true
-                },
-                familyName: {
+                nickname: {
                     required: true,
                     mutable: true
                 }
             },
             passwordPolicy: {
-                minLength: 8,
+                minLength: 6,
                 requireLowercase: true,
                 requireUppercase: true,
                 requireDigits: true,
-                requireSymbols: true
+                requireSymbols: false
             },
             accountRecovery: cognito.AccountRecovery.EMAIL_ONLY,
             removalPolicy: RemovalPolicy.DESTROY
         });
 
-        // Add a custom domain to the User Pool
+        // Add a domain to the User Pool
+        // Using Cognito domain prefix instead of custom domain to avoid DNS configuration issues
         const domain = new cognito.UserPoolDomain(this, 'FeatureFlagDomain', {
             userPool: this.userPool,
             cognitoDomain: {
-                domainPrefix: 'feature-flip'
-            }
+                domainPrefix: 'features-flip'
+            },
+            // To use a custom domain, you need proper DNS configuration:
+            // 1. Create an A record for the parent domain (featuresflip.com)
+            // 2. Then you can use a custom domain like this:
+            // customDomain: {
+            //     domainName: 'auth.featuresflip.com',
+            //     certificate: Certificate.fromCertificateArn(this, 'FeaturesCertificate', 'arn:aws:acm:us-east-1:918068445959:certificate/f2cb0d6f-c154-44ad-8967-84752c46a2ee')
+            // }
         });
 
         // Create a User Pool Client
@@ -121,7 +125,11 @@ export class CognitoStack extends cdk.Stack {
 
         // Output the Cognito domain URL
         new cdk.CfnOutput(this, 'CognitoDomainUrl', {
-            value: `https://feature-flip.auth.${this.region}.amazoncognito.com`
+            value: `https://${domain.domainName}.auth.${this.region}.amazoncognito.com`
+        });
+
+        new cdk.CfnOutput(this, 'CognitoCloudFront', {
+            value: domain.cloudFrontEndpoint
         });
     }
 }
