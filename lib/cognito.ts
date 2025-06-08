@@ -89,6 +89,23 @@ export class CognitoStack extends cdk.Stack {
             'AdvancedSecurityMode': 'OFF'
         });
 
+        // Add UI customization for the hosted UI
+        // Wait for the domain to be created before adding UI customization
+        const cfnUserPoolUICustomization = new cognito.CfnUserPoolUICustomizationAttachment(this, 'UICustomization', {
+            userPoolId: this.userPool.userPoolId,
+            clientId: 'ALL', // Apply to all clients
+            css: `.banner-customizable { background-color: #1976d2; }
+                  .submitButton-customizable { background-color: #1976d2; }
+                  .submitButton-customizable:hover { background-color: #8a2be2; }
+                  .inputField-customizable:focus { border-color: #8a2be2; }
+                  .textDescription-customizable { color: #1976d2; }
+                  .passwordCheck-valid-customizable { color: #1976d2; }
+                  .idpButton-customizable { background-color: #1976d2; }
+                  .idpButton-customizable:hover { background-color: #8a2be2; }
+                  /* Logo can be set using background-image in CSS */
+                  .logo-customizable { background-image: url('https://onlinepngtools.com/images/logo.png'); }`
+        });
+
         // For custom login page, we would typically use a resource server or Lambda function
         // to serve the custom HTML/CSS, and point the Cognito domain to it
         // This is beyond the scope of this example, but the domain is set up for it

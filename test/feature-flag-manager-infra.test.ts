@@ -50,6 +50,22 @@ test('Cognito User Pool Created', () => {
   template.hasResourceProperties('AWS::Cognito::UserPoolDomain', {
     Domain: 'feature-flip'
   });
+
+  // Verify UI Customization is created
+  template.resourceCountIs('AWS::Cognito::UserPoolUICustomizationAttachment', 1);
+
+  // Verify the UI customization has the expected properties
+  const uiCustomizations = template.findResources('AWS::Cognito::UserPoolUICustomizationAttachment');
+  const uiCustomization = Object.values(uiCustomizations)[0];
+
+  // Check that ClientId is 'ALL'
+  expect(uiCustomization.Properties.ClientId).toEqual('ALL');
+
+  // Check that CSS contains the blue color
+  expect(uiCustomization.Properties.CSS).toContain('background-color: #1976d2');
+
+  // Check that CSS contains the logo URL
+  expect(uiCustomization.Properties.CSS).toContain('https://onlinepngtools.com/images/logo.png');
 });
 
 test('DynamoDB Tables Created', () => {
@@ -72,9 +88,23 @@ test('DynamoDB Tables Created', () => {
     TableName: 'Environment',
     KeySchema: [
       {
-        AttributeName: 'name',
+        AttributeName: 'userId',
         KeyType: 'HASH'
+      },
+      {
+        AttributeName: 'name',
+        KeyType: 'RANGE'
       }
     ]
+  });
+
+  // Verify API Key table
+  template.hasResourceProperties('AWS::DynamoDB::Table', {
+    TableName: 'EnvApiKey'
+  });
+
+  // Verify Feature Flag table
+  template.hasResourceProperties('AWS::DynamoDB::Table', {
+    TableName: 'FeatureFlag'
   });
 });
