@@ -15,6 +15,8 @@ export interface LambdaProps {
 }
 
 export class LambdaStack extends cdk.Stack {
+    readonly ffLambda: lambda.Function;
+
     constructor(scope: Construct, id: string, lambdaProps:LambdaProps, props?: cdk.StackProps) {
         super(scope, id, props);
 
@@ -44,5 +46,8 @@ export class LambdaStack extends cdk.Stack {
         }));
 
         lambdaProps.apiTable.grantReadData(ffLambda);
+
+        // Assign the Lambda function to the class property
+        this.ffLambda = ffLambda;
     }
 }
