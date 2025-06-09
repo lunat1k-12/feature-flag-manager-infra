@@ -5,6 +5,7 @@ import {Construct} from "constructs";
 
 export class DynamoDbStack extends cdk.Stack {
 
+    readonly apiTable: dynamodb.Table;
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
@@ -16,7 +17,7 @@ export class DynamoDbStack extends cdk.Stack {
             removalPolicy: RemovalPolicy.DESTROY, // Auto-delete table on stack removal
         });
 
-        const apiTable = new dynamodb.Table(this, 'ApiKeyTable', {
+        this.apiTable = new dynamodb.Table(this, 'ApiKeyTable', {
             tableName: 'EnvApiKey',
             partitionKey: { name: 'EnvName', type: dynamodb.AttributeType.STRING },
             sortKey: {name: 'key', type: dynamodb.AttributeType.STRING },
@@ -24,7 +25,7 @@ export class DynamoDbStack extends cdk.Stack {
             removalPolicy: RemovalPolicy.DESTROY, // Auto-delete table on stack removal
         });
 
-        apiTable.addLocalSecondaryIndex({
+        this.apiTable.addLocalSecondaryIndex({
             indexName: 'ApiKey',
             sortKey: {name: 'key', type: dynamodb.AttributeType.STRING }
         })
