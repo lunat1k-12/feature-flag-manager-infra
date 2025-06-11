@@ -6,6 +6,7 @@ import {Construct} from "constructs";
 export class DynamoDbStack extends cdk.Stack {
 
     readonly apiTable: dynamodb.Table;
+    readonly featureFlagsTable: dynamodb.Table;
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
@@ -30,7 +31,7 @@ export class DynamoDbStack extends cdk.Stack {
             sortKey: {name: 'key', type: dynamodb.AttributeType.STRING }
         })
 
-        const ffTable = new dynamodb.Table(this, 'FeatureFlagTable', {
+        this.featureFlagsTable = new dynamodb.Table(this, 'FeatureFlagTable', {
             tableName: 'FeatureFlag',
             partitionKey: {name: 'EnvName', type: dynamodb.AttributeType.STRING },
             sortKey: { name: 'FeatureName', type: dynamodb.AttributeType.STRING },
@@ -38,7 +39,7 @@ export class DynamoDbStack extends cdk.Stack {
             removalPolicy: RemovalPolicy.DESTROY, // Auto-delete table on stack removal
         });
 
-        ffTable.addGlobalSecondaryIndex({
+        this.featureFlagsTable.addGlobalSecondaryIndex({
             indexName: 'FFUserId',
             partitionKey: { name: 'userId', type: dynamodb.AttributeType.STRING },
             sortKey: {name: 'EnvName', type: dynamodb.AttributeType.STRING }

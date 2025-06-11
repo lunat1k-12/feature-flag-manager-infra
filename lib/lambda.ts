@@ -10,6 +10,7 @@ import {Vpc} from "aws-cdk-lib/aws-ec2";
 
 export interface LambdaProps {
     apiTable:dynamodb.Table,
+    featureFlagsTable:dynamodb.Table,
     bucket:s3.Bucket,
     vpc:Vpc
 }
@@ -46,6 +47,7 @@ export class LambdaStack extends cdk.Stack {
         }));
 
         lambdaProps.apiTable.grantReadData(ffLambda);
+        lambdaProps.featureFlagsTable.grantReadData(ffLambda);
 
         // Assign the Lambda function to the class property
         this.ffLambda = ffLambda;

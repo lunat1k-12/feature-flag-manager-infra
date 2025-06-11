@@ -21,6 +21,7 @@ const s3Stack = new S3Stack(app, 'ff-s3-stack', props);
 
 const lambdaProps: LambdaProps = { 
     apiTable: dynamoDbStack.apiTable,
+    featureFlagsTable: dynamoDbStack.featureFlagsTable,
     bucket: s3Stack.bucket,
     vpc: vpcStack.vpc
 };
