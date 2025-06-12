@@ -7,6 +7,8 @@ export class DynamoDbStack extends cdk.Stack {
 
     readonly apiTable: dynamodb.Table;
     readonly featureFlagsTable: dynamodb.Table;
+    readonly accountUsage: dynamodb.Table;
+
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
@@ -43,6 +45,13 @@ export class DynamoDbStack extends cdk.Stack {
             indexName: 'FFUserId',
             partitionKey: { name: 'userId', type: dynamodb.AttributeType.STRING },
             sortKey: {name: 'EnvName', type: dynamodb.AttributeType.STRING }
-        })
+        });
+
+        this.accountUsage = new dynamodb.Table(this, 'AccountUsageTable', {
+            tableName: 'AccountUsage',
+            partitionKey: {name: 'UserId', type: dynamodb.AttributeType.STRING },
+            billingMode: dynamodb.BillingMode.PAY_PER_REQUEST, // On-demand pricing
+            removalPolicy: RemovalPolicy.DESTROY, // Auto-delete table on stack removal
+        });
     }
 }
