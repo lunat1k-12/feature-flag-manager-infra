@@ -23,6 +23,7 @@ const lambdaProps: LambdaProps = {
     apiTable: dynamoDbStack.apiTable,
     featureFlagsTable: dynamoDbStack.featureFlagsTable,
     accountUsage: dynamoDbStack.accountUsage,
+    apiMetricTable: dynamoDbStack.apiMetrics,
     bucket: s3Stack.bucket,
     vpc: vpcStack.vpc
 };
